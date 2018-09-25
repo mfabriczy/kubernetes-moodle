@@ -1,0 +1,34 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Values.ngnixDeploy.name }}
+  labels:
+    app: {{ .Values.app.name }}
+    chart: {{ template "kubernetes-moodle.chart" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ngnixDeploy.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ngnixDeploy.name }}
+    spec:
+      containers:
+      - name: {{ .Values.ngnixDeploy.name }}
+        image: {{ .Values.ngnixDeploy.repository }}:{{ .Values.ngnixDeploy.tag }}
+        imagePullPolicy: {{ .Values.ngnixDeploy.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.ngnixDeploy.port }}
+        volumeMounts:
+        - name: nginx-default-conf-volume
+          mountPath: {{ .Values.nginxConfigMap.mountPath.defaultConf }}
+        command: [ "sh", "-c", "touch /usr/share/nginx/html/index.php && exec nginx -g 'daemon off;'" ]
+      volumes:
+      - name: nginx-default-conf-volume
+        configMap:
+          name: nginx
+          items:
+          - key: default.conf
+            path: default.conf

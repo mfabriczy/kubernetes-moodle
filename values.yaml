@@ -1,3 +1,44 @@
 # Default values for kubernetes-moodle.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+app:
+  name: Moodle
+
+#############
+# Deployments
+#############
+ngnixDeploy:
+  name: nginx
+  repository: nginx
+  tag: 1.10.2-alpine
+  pullPolicy: Always
+  port: 80
+
+moodleDeploy:
+  name: moodle
+  repository:
+  tag: latest
+  pullPolicy: Always
+  port: 9000
+
+##########
+# Services
+##########
+service:
+  nginx:
+    name: nginx
+    port: 80
+
+  moodle:
+    name: moodle
+    port: 9000
+
+###########
+# ConfigMap
+###########
+nginxConfigMap:
+  mountPath:
+    defaultConf: /etc/nginx/conf.d

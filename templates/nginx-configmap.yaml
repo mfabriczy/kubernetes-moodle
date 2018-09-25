@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx
+  labels:
+    app: {{ .Values.app.name }}
+    chart: {{ template "kubernetes-moodle.chart" . }}
+data:
+  default.conf: |
+    server {
+        listen       80;
+        server_name  {{ .Values.moodleIngress.host }};
+        index        index.php index.html;
+        root         /opt/moodle;
+        rewrite      ^/(.*\.php)(/)(.*)$ /$1?file=/$3 last;
+
+        location / {
+            root /usr/share/nginx/html;
+        }
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        location ~ \.php$ {
+            fastcgi_pass   moodle:9000;
+            fastcgi_index  index.php;
+            include        fastcgi.conf;
+        }
+    }
