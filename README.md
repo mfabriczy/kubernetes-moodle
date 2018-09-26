@@ -19,3 +19,17 @@ helm init --service-account tiller
 ```
 
 Install this Helm chart by using command, `helm install`.
+
+Retrieve dependent Helm charts declared in the `requirements.yaml` file:
+```
+helm dependency update
+```
+
+After following the steps below, install this Helm chart by using command, `helm install`.
+
+## [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx)
+Creates and configures a load balancer. The Ingress Controller is deployed as a
+DaemonSet. Configured with an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) to route
+traffic to services within a cluster.
+
+Set the value of the `moodleIngress.host` key to be the subdomain of your Moodle site, e.g., moodle.yourdomain.com.

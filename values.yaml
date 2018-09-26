@@ -42,3 +42,24 @@ service:
 nginxConfigMap:
   mountPath:
     defaultConf: /etc/nginx/conf.d
+
+################
+# Moodle Ingress
+################
+moodleIngress:
+  enableAccessLog: true
+  host:
+  path: /
+
+##########################
+# NGINX Ingress Controller
+##########################
+nginx-ingress:
+  controller:
+    kind: DaemonSet
+    nodeSelector:
+      # The default value below is a label automatically attached to nodes by kops. Change to whatever you want to insert
+      # the ingress controller into specific nodes.
+      kops.k8s.io/instancegroup: nodes
+    publishService:
+      enabled: true
