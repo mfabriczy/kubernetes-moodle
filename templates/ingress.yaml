@@ -4,6 +4,7 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/enable-access-log: {{ quote .Values.moodleIngress.enableAccessLog }}
     kubernetes.io/ingress.class: nginx
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.moodleIngress.host }}
   name: moodle-ingress
 spec:
   rules:

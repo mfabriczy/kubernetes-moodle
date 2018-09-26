@@ -33,3 +33,8 @@ DaemonSet. Configured with an [Ingress](https://kubernetes.io/docs/concepts/serv
 traffic to services within a cluster.
 
 Set the value of the `moodleIngress.host` key to be the subdomain of your Moodle site, e.g., moodle.yourdomain.com.
+
+## [ExternalDNS](https://github.com/kubernetes-incubator/external-dns)
+Control DNS records dynamically by configuring your DNS provider - in this case, Route53.
+
+In the `values.yaml` file, set the value of the `external-dns.domainFilters` key to be the domain e.g., "yourdomain.com".

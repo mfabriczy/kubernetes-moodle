@@ -63,3 +63,17 @@ nginx-ingress:
       kops.k8s.io/instancegroup: nodes
     publishService:
       enabled: true
+
+#############
+# ExternalDNS
+#############
+external-dns:
+  podAnnotations:
+    # A role's ARN to be annotated to the pod(s), the role to be assumed using kube2iam.
+    # For the Principle of least privilege: service isolation when pods use AWS resources.
+    # For more info see: https://github.com/jtblin/kube2iam
+    iam.amazonaws.com/role:
+  rbac:
+    create: true
+  domainFilters:
+  txtPrefix:
