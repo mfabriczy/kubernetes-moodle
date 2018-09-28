@@ -5,5 +5,8 @@ dependencies:
 - name: external-dns
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.7.5
-digest: sha256:441dcb50953d3a60486b6bd8b03600c76234883c869bf5b89280a6910dd33843
-generated: 2018-09-26T21:09:46.191625625+09:30
+- name: kube2iam
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 0.9.0
+digest: sha256:51efa63212510e087e5b8a6561d4d3ecb42d4ef50c3336c5cac0485463b6791c
+generated: 2018-09-29T16:29:03.047872384+09:30

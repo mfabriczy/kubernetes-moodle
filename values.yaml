@@ -77,3 +77,14 @@ external-dns:
     create: true
   domainFilters:
   txtPrefix:
+
+##########
+# kube2iam
+##########
+kube2iam:
+  host:
+    iptables: true
+    # Container networking - set to kops (cbr0) by default
+    interface: cbr0
+  rbac:
+    create: true

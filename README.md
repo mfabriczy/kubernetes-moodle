@@ -38,3 +38,19 @@ Set the value of the `moodleIngress.host` key to be the subdomain of your Moodle
 Control DNS records dynamically by configuring your DNS provider - in this case, Route53.
 
 In the `values.yaml` file, set the value of the `external-dns.domainFilters` key to be the domain e.g., "yourdomain.com".
+
+## [kube2iam](https://github.com/jtblin/kube2iam)
+Allows a pod to assume an IAM role. Deployed as a
+[DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/)
+
+Multiple containers with different purposes usually share the same node (unless using
+[nodeSelector](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector)) and thus a single IAM
+role (an EC2 instance can only have one IAM role). Previously one would create an IAM role with all the necessary IAM
+policies attached; this is not advisable from a security standpoint.
+
+An IAM role will need to be created. This role would contain the necessary policies to allow ExternalDNS to configure
+Route 53. The role will be annotated to the ExternalDNS pod, and the pod will assume that role.
+
+To create the role, use the provided shell script: `iam-create-externaldns-role.sh`; set the values for the `ACCOUNT_ID`
+([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)), and
+`NODE_ROLE_NAME` with the name of the role attached to your node(s).
