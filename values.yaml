@@ -88,3 +88,18 @@ kube2iam:
     interface: cbr0
   rbac:
     create: true
+
+##############
+# cert-manager
+##############
+cert-manager:
+  podAnnotations:
+    iam.amazonaws.com/role:
+  ingress:
+    acmeChallengeType: dns01
+    acmeDns01Provider: route53
+  clusterIssuer:
+    name: letsencrypt-prod
+    email:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    region:

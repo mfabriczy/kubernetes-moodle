@@ -1,0 +1,16 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: ClusterIssuer
+metadata:
+  # A parse error will occur when using dashes '-' (cert-manager): https://github.com/helm/helm/issues/2192
+  name: {{ index .Values "cert-manager" "clusterIssuer" "name" }}
+spec:
+  acme:
+    server: {{ index .Values "cert-manager" "clusterIssuer" "server" }}
+    email: {{ index .Values "cert-manager" "clusterIssuer" "email" }}
+    privateKeySecretRef:
+      name: {{ index .Values "cert-manager" "clusterIssuer" "name" }}
+    dns01:
+      providers:
+        - name: route53
+          route53:
+            region: {{ index .Values "cert-manager" "clusterIssuer" "region" }}

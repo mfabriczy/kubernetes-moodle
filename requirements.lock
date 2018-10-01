@@ -8,5 +8,8 @@ dependencies:
 - name: kube2iam
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.9.0
-digest: sha256:51efa63212510e087e5b8a6561d4d3ecb42d4ef50c3336c5cac0485463b6791c
-generated: 2018-09-29T16:29:03.047872384+09:30
+- name: cert-manager
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: v0.5.2
+digest: sha256:ea2758a716431ac9371e73900866fe40d9ac467698a45cfbb4120b727b70c910
+generated: 2019-03-31T18:49:25.39323807+10:30
