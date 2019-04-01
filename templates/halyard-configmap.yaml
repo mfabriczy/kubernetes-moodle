@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: halyard
+  labels:
+    app: {{ .Values.app.name }}
+    chart: {{ template "kubernetes-moodle.chart" . }}
+data:
+  config.sh: |
+    #!/usr/bin/env bash
+
+    $HAL_COMMAND config edit --timezone {{ .Values.spinnaker.timeZone }}
+
+    # By using Halyard, this script will setup authentication and authorisation for Spinnaker: OAuth 2.0 via GitHub.
+    $HAL_COMMAND config security authn oauth2 edit \
+    --client-id {{ .Values.spinnaker.oauth.clientID }} \
+    --client-secret {{ .Values.spinnaker.oauth.clientSecret }} \
+    --provider {{ .Values.spinnaker.oauth.provider }}
+
+    # If you have a proxy fronting and terminating SSL requests, the following link might be needed:
+    # https://www.spinnaker.io/setup/security/authentication/oauth/#network-architecture-and-ssl-termination
+    {{ if .Values.spinnaker.oauth.redirectURI }}
+      $HAL_COMMAND config security authn oauth2 edit --pre-established-redirect-uri {{ .Values.spinnaker.oauth.redirectURI }}
+    {{ end }}
+    $HAL_COMMAND config security ui edit --override-base-url {{ .Values.spinnaker.oauth.uiBaseURL }}
+    $HAL_COMMAND config security api edit --override-base-url {{ .Values.spinnaker.oauth.apiBaseURL }}
+    $HAL_COMMAND config security authn oauth2 enable
+
+    $HAL_COMMAND deploy apply

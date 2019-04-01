@@ -11,5 +11,8 @@ dependencies:
 - name: cert-manager
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: v0.5.2
-digest: sha256:ea2758a716431ac9371e73900866fe40d9ac467698a45cfbb4120b727b70c910
-generated: 2019-03-31T18:49:25.39323807+10:30
+- name: spinnaker
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 1.1.6
+digest: sha256:6afc0987aa5b1ad008c5fd99a33d2f0d9fa4fe2561f705c1c6b033447dd3707b
+generated: 2019-03-31T18:52:34.979605374+10:30

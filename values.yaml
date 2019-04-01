@@ -103,3 +103,63 @@ cert-manager:
     email:
     server: https://acme-v02.api.letsencrypt.org/directory
     region:
+
+##############
+# Spinnaker
+##############
+spinnaker:
+  timeZone: "Australia/Adelaide"
+  oauth:
+    # The Client ID, Client Secret provided when adding Spinnaker to GitHub as an OAuth app.
+    clientID:
+    clientSecret:
+    provider: "github"
+    # API endpoint for Spinnaker's REST API service. Provide the full base URL.
+    apiBaseURL: "https://api.spinnaker.com"
+
+    # If you have a proxy fronting and terminating SSL requests, the following link might be needed:
+    # https://www.spinnaker.io/setup/security/authentication/oauth/#network-architecture-and-ssl-termination
+    redirectURI:
+
+    # The full base URL of proxy/load balancer that's fronting UI requests for Spinnaker
+    uiBaseURL: "https://spinnaker.com"
+  ingress:
+    enabled: true
+    # Same as uiBaseURL (above).
+    host: spinnaker.com
+    tls:
+    - secretName: spinnaker.com
+      hosts:
+      - spinnaker.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      # External DNS to create an A record in Route 53.
+      external-dns.alpha.kubernetes.io/hostname: "spinnaker.com"
+      # cert-manager to issue and manage a TLS certificate for this service.
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: route53
+
+  # By default, Spinnaker is configured without any authentication and authorisation - anyone is able access Spinnaker.
+  # An ingress is used to expose Spinnaker's API (Spinnaker API Gateway). In this case, used for OAuth 2.0 - GitHub as the provider.
+  ingressGate:
+    enabled: true
+    host: api.spinnaker.com
+    tls:
+    - secretName: api.spinnaker.com
+      hosts:
+      - api.spinnaker.com
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      # API endpoint for Spinnaker's REST API service. Provide the full base URL
+      # e.g., https://api.spinnaker.com - do not include the HTTP protocol in the value.
+      external-dns.alpha.kubernetes.io/hostname: "api.spinnaker.com"
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      certmanager.k8s.io/acme-challenge-type: dns01
+      certmanager.k8s.io/acme-dns01-provider: route53
+
+  halyard:
+    additionalScripts:
+      enabled: true
+      configMapName: halyard
+      configMapKey: config.sh
