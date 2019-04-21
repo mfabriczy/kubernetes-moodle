@@ -1,0 +1,23 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+    chart: {{ template "moodle.chart" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.matchLabel }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.matchLabel }}
+    spec:
+      containers:
+        - name: {{ .Values.name }}
+          image: {{ .Values.repository }}:{{ .Values.tag }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.service.port }}

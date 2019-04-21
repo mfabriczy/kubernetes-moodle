@@ -17,13 +17,6 @@ ngnixDeploy:
   pullPolicy: Always
   port: 80
 
-moodleDeploy:
-  name: moodle
-  repository:
-  tag: latest
-  pullPolicy: Always
-  port: 9000
-
 ##########
 # Services
 ##########
@@ -31,10 +24,6 @@ service:
   nginx:
     name: nginx
     port: 80
-
-  moodle:
-    name: moodle
-    port: 9000
 
 ###########
 # ConfigMap
@@ -109,6 +98,13 @@ cert-manager:
 ##############
 spinnaker:
   timeZone: "Australia/Adelaide"
+  artifact:
+    s3:
+      accessKey:
+      secretKey:
+  spinnakerFeatureFlags:
+    - artifacts
+    - pipeline-templates
   oauth:
     # The Client ID, Client Secret provided when adding Spinnaker to GitHub as an OAuth app.
     clientID:

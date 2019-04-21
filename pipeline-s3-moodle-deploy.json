@@ -1,0 +1,77 @@
+{
+  "appConfig": {},
+  "expectedArtifacts": [
+    {
+      "defaultArtifact": {
+        "id": "eab2bf6a-9433-47e0-abb6-68ce046c8cf4",
+        "name": "s3://ENTER-BUCKET-NAME-HERE/moodle.tgz",
+        "reference": "s3://ENTER-BUCKET-NAME-HERE/moodle.tgz",
+        "type": "s3/object"
+      },
+      "id": "7783c1f1-a9b5-4333-b783-d9b21f9cb038",
+      "matchArtifact": {
+        "id": "efe67d0b-5a9a-4219-96ce-fa838e57ae1a",
+        "name": "s3://ENTER-BUCKET-NAME-HERE/moodle.tgz",
+        "type": "s3/object"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": true
+    }
+  ],
+  "keepWaitingPipelines": false,
+  "lastModifiedBy": "",
+  "limitConcurrent": true,
+  "stages": [
+    {
+      "expectedArtifacts": [
+        {
+          "defaultArtifact": {},
+          "id": "f0275710-1316-4947-b97a-d0d391c988d3",
+          "matchArtifact": {
+            "kind": "base64",
+            "name": "moodle",
+            "type": "embedded/base64"
+          },
+          "useDefaultArtifact": false
+        }
+      ],
+      "inputArtifacts": [
+        {
+          "account": "s3",
+          "id": "7783c1f1-a9b5-4333-b783-d9b21f9cb038"
+        }
+      ],
+      "name": "Bake (Manifest)",
+      "namespace": "default",
+      "outputName": "moodle",
+      "overrides": {},
+      "refId": "1",
+      "requisiteStageRefIds": [],
+      "templateRenderer": "HELM2",
+      "type": "bakeManifest"
+    },
+    {
+      "account": "default",
+      "cloudProvider": "kubernetes",
+      "manifestArtifactAccount": "embedded-artifact",
+      "manifestArtifactId": "f0275710-1316-4947-b97a-d0d391c988d3",
+      "moniker": {
+        "app": "moodle"
+      },
+      "name": "Deploy (Manifest)",
+      "refId": "2",
+      "relationships": {
+        "loadBalancers": [],
+        "securityGroups": []
+      },
+      "requiredArtifactIds": [],
+      "requisiteStageRefIds": [
+        "1"
+      ],
+      "source": "artifact",
+      "type": "deployManifest"
+    }
+  ],
+  "triggers": [],
+  "updateTs": "1552782800000"
+}

@@ -26,4 +26,9 @@ data:
     $HAL_COMMAND config security api edit --override-base-url {{ .Values.spinnaker.oauth.apiBaseURL }}
     $HAL_COMMAND config security authn oauth2 enable
 
+    echo {{ .Values.spinnaker.artifact.s3.secretKey }} | $HAL_COMMAND config artifact s3 account add s3 \
+    --aws-access-key-id {{ .Values.spinnaker.artifact.s3.accessKey }} \
+    --aws-secret-access-key
+    $HAL_COMMAND config artifact s3 enable
+
     $HAL_COMMAND deploy apply

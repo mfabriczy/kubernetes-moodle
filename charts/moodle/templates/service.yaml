@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: moodle
+  labels:
+    app: {{ .Values.name }}
+    chart: {{ template "moodle.chart" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      protocol: TCP
+  selector:
+    app: {{ .Values.name }}

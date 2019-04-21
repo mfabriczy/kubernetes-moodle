@@ -105,3 +105,23 @@ following keys: `spinnaker.ingressGate.host` (without HTTPS), `spinnaker.ingress
 
 When logging into Spinnaker for the first time, as part of the OAuth authorisation process, you will be prompted to enter
 your GitHub credentials to proceed.
+
+### Pipelines
+Pipelines will be used deploy Moodle releases and patches into a cluster. An artifact is generated from the Moodle chart
+by using the command, `helm package`. The artifact is then stored into S3, to be consumed by Spinnaker; afterwards, it's
+deployed into a cluster. In the future, Jenkins will be used to help automate the deployment process which includes the
+packaging of the Moodle Helm chart.
+
+To have S3 as the artifact provider, insert the access and secret key of a user from IAM into the following keys in
+`values.yaml`: `spinnaker.artifact.s3.accessKey` and `spinnaker.artifact.s3.secretKey`. The IAM user will need a policy
+attached to get objects from an S3 bucket. You can use the `AdministratorAccess` policy for testing only; it is not
+recommended for use in production.
+
+Create an S3 bucket to contain the artifacts. In the future, [Terraform](https://www.terraform.io) will be used to
+create the bucket.
+
+Create a deployment pipeline using the `pipeline-s3-moodle-deploy.json` file
+([instructions](https://www.spinnaker.io/guides/user/pipeline/managing-pipelines/#edit-a-pipeline-as-json)). The file
+can be used as a reference point to build a pipeline to satisfy requirements. After creation, be sure to add the
+bucket's name into the
+[Expected Artifacts](https://www.spinnaker.io/reference/artifacts/in-pipelines/#expected-artifacts) section.

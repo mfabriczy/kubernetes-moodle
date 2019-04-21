@@ -1,0 +1,9 @@
+name: moodle
+matchLabel: moodle
+replicaCount: 1
+repository:
+tag: latest
+pullPolicy: Always
+
+service:
+  port: 9000

@@ -1,0 +1,9 @@
+apiVersion: v1
+appVersion: "1.0"
+description: Create a deployment of Moodle pods which run on top of the PHP-FPM image. This chart is used to bootstrap the necessary pod and related services to use Moodle, it can be discarded afterwards.
+name: moodle
+version: 0.1.0
+maintainers:
+  - name: Marcus Fabriczy
+    email: marcusfabriczy@gmail.com
+icon: https://todo.com.au
