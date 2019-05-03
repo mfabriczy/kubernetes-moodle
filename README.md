@@ -112,13 +112,18 @@ by using the command, `helm package`. The artifact is then stored into S3, to be
 deployed into a cluster. In the future, Jenkins will be used to help automate the deployment process which includes the
 packaging of the Moodle Helm chart.
 
-To have S3 as the artifact provider, insert the access and secret key of a user from IAM into the following keys in
-`values.yaml`: `spinnaker.artifact.s3.accessKey` and `spinnaker.artifact.s3.secretKey`. The IAM user will need a policy
-attached to get objects from an S3 bucket. You can use the `AdministratorAccess` policy for testing only; it is not
-recommended for use in production.
+Create an S3 bucket, IAM user, and a IAM policy to allow Spinnaker to access and retrieve objects from the bucket.
+[Terraform](https://www.terraform.io) will be needed to create the aforementioned resources defined in the
+`spinnaker-artifact.tf` file. In said file, specify a globally unique name for the bucket for the resource argument,
+`aws_s3_bucket.s3_spinnaker_moodle_artifacts.name`; ensure that bucket name is inserted into the policy document for the
+resource argument, `aws_iam_user_policy.s3_spinnaker_moodle_artifacts.policy`. When done, use `terraform apply`.
 
-Create an S3 bucket to contain the artifacts. In the future, [Terraform](https://www.terraform.io) will be used to
-create the bucket.
+Now, to generate an IAM access key for the user account that was just created, see the
+[link](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey) for the
+instructions.
+
+To have S3 as the artifact provider for Spinnaker, insert the access and secret key of the user from IAM into the
+following keys in `values.yaml`: `spinnaker.artifact.s3.accessKey` and `spinnaker.artifact.s3.secretKey`.
 
 Create a deployment pipeline using the `pipeline-s3-moodle-deploy.json` file
 ([instructions](https://www.spinnaker.io/guides/user/pipeline/managing-pipelines/#edit-a-pipeline-as-json)). The file
