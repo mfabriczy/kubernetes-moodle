@@ -1,13 +1,9 @@
-#!/usr/bin/env bash
+resource "aws_iam_role" "CertManager" {
+  name = "CertManagerDNSValidate"
+  description = "The role the cert-manager pod assumes (via kube2iam) to perform DNS validation against Let's Encrypt."
 
-# This script will create the role and policies to allow the cert-manager pod(s) to perform DNS validation against
-# Let's Encrypt, allowing it to issue TLS certificates.
-
-ACCOUNT_ID=
-NEW_ROLE_NAME="CertManagerDNSValidate"
-NODE_ROLE_NAME=
-
-aws iam create-role --role-name $NEW_ROLE_NAME --assume-role-policy-document '{
+  assume_role_policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -22,14 +18,21 @@ aws iam create-role --role-name $NEW_ROLE_NAME --assume-role-policy-document '{
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::'"$ACCOUNT_ID"':role/'"$NODE_ROLE_NAME"'"
+        "AWS": "arn:aws:iam::ACCOUNT_ID:role/NODE_ROLE_NAME"
       },
       "Action": "sts:AssumeRole"
     }
   ]
-}' --description "The role the cert-manager pod assumes (via kube2iam) to perform DNS validation against Let's Encrypt."
+}
+EOF
+}
 
-aws iam put-role-policy --role-name $NEW_ROLE_NAME --policy-name CertManagerRoute53 --policy-document '{
+resource "aws_iam_role_policy" "CertManager" {
+  name = "CertManagerRoute53"
+  role = "${aws_iam_role.CertManager.id}"
+
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -51,4 +54,6 @@ aws iam put-role-policy --role-name $NEW_ROLE_NAME --policy-name CertManagerRout
       ]
     }
   ]
-}'
+}
+EOF
+}

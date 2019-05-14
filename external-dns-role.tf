@@ -1,13 +1,9 @@
-#!/usr/bin/env bash
+resource "aws_iam_role" "ExternalDNS" {
+  name = "ExternalDNSRoleForRoute53"
+  description = "The role the pod will assume to allow External DNS to perform actions against Route 53."
 
-# This script will create the role and policies required to allow the ExternalDNS pod(s) to create/remove its records
-# in Route53.
-
-ACCOUNT_ID=
-NEW_ROLE_NAME="ExternalDnsRoleForRoute53"
-NODE_ROLE_NAME=
-
-aws iam create-role --role-name $NEW_ROLE_NAME --assume-role-policy-document '{
+  assume_role_policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -22,14 +18,21 @@ aws iam create-role --role-name $NEW_ROLE_NAME --assume-role-policy-document '{
       "Sid": "",
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::'"$ACCOUNT_ID"':role/'"$NODE_ROLE_NAME"'"
+        "AWS": "arn:aws:iam::ACCOUNT_ID:role/NODE_ROLE_NAME"
       },
       "Action": "sts:AssumeRole"
     }
   ]
-}' --description 'The role the pod will assume to allow External DNS to perform actions against Route 53.'
+}
+EOF
+}
 
-aws iam put-role-policy --role-name $NEW_ROLE_NAME --policy-name ExternalDnsRoute53 --policy-document '{
+resource "aws_iam_role_policy" "ExternalDNS" {
+  name = "ExternalDNSRoute53"
+  role = "${aws_iam_role.ExternalDNS.id}"
+
+  policy = <<EOF
+{
   "Version": "2012-10-17",
   "Statement": [
     {
@@ -52,4 +55,6 @@ aws iam put-role-policy --role-name $NEW_ROLE_NAME --policy-name ExternalDnsRout
       ]
     }
   ]
-}'
+}
+EOF
+}

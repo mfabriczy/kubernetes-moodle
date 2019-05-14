@@ -52,9 +52,10 @@ policies attached; this is not advisable from a security standpoint.
 An IAM role will need to be created. This role would contain the necessary policies to allow ExternalDNS to configure
 Route 53. The role will be annotated to the ExternalDNS pod, and the pod will assume that role.
 
-To create the role, use the provided shell script: `iam-create-externaldns-role.sh`; set the values for the `ACCOUNT_ID`
-([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)), and
-`NODE_ROLE_NAME` with the name of the role attached to your node(s).
+To create the role, use the provided file: `external-dns-role.tf`; set the values for the `ACCOUNT_ID`
+([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)) in the
+resource argument `aws_iam_role.ExternalDNS.assume_role_policy`, and replace the `NODE_ROLE_NAME` placeholder with the
+name of the role attached to your node(s). When done, use `terraform apply`.
 
 ## [cert-manager](https://github.com/jetstack/cert-manager)
 cert-manager is used to automate the management and issuance of TLS certificates from
@@ -69,9 +70,10 @@ An IAM role will need to be created. This role would contain the necessary polic
 [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) requests against Route 53. The role
 will be annotated to the cert-manager pod, and the pod will assume that role.
 
-To create the role, use the provided shell script: `iam-create-cert-manager-role.sh`; set the values for the `ACCOUNT_ID`
-([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)), and
-`NODE_ROLE_NAME` with the name of the role attached to your node(s).
+To create the role, use the provided Terraform file: `cert-manager-role.tf`; set the values for the `ACCOUNT_ID`
+([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)) in the
+resource argument `aws_iam_role.CertManager.assume_role_policy`, and replace the `NODE_ROLE_NAME` placeholder with the
+name of the role attached to your node(s). When done, use `terraform apply`.
 
 ## [Spinnaker](https://www.spinnaker.io/)
 A continuous delivery platform. Create deployment pipelines that run integration and system tests, spin up and down
