@@ -14,3 +14,6 @@ dependencies:
 - name: spinnaker
   version: 1.8.0
   repository: https://kubernetes-charts.storage.googleapis.com/
+- name: prometheus-operator
+  version: 2.1.5
+  repository: https://kubernetes-charts.storage.googleapis.com/

@@ -132,3 +132,18 @@ Create a deployment pipeline using the `pipeline-s3-moodle-deploy.json` file
 can be used as a reference point to build a pipeline to satisfy requirements. After creation, be sure to add the
 bucket's name into the
 [Expected Artifacts](https://www.spinnaker.io/reference/artifacts/in-pipelines/#expected-artifacts) section.
+
+## [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/)
+Prometheus is used to collect metrics from the Kubernetes cluster, and more specifically, pods running Moodle. Grafana
+will use that data to display those metrics in dashboards. Users will be able to view the state of the cluster, allowing
+one to be proactive in identifying and addressing issues.
+
+Firstly, set the subdomain value for your Grafana instance. Set the value for the keys
+`prometheus-operator.grafana.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` and
+`prometheus-operator.grafana.ingress.hosts`.
+
+For HTTPS, set that subdomain value for the keys: `prometheus-operator.grafana.ingress.tls.secretName` and
+`prometheus-operator.grafana.ingress.tls.hosts`.
+
+Lastly, set a password for the admin user by setting a value for the key, `grafana.adminPassword`. Once Grafana is
+running, you can login using the username, `admin`.
