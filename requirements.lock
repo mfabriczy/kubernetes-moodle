@@ -1,7 +1,7 @@
 dependencies:
 - name: nginx-ingress
   repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 0.28.2
+  version: 1.2.3
 - name: external-dns
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.7.5
@@ -17,5 +17,5 @@ dependencies:
 - name: prometheus-operator
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 5.12.3
-digest: sha256:8e74df27f69305d738b2907d3bf856ea8eee29d34d637eb855fa61c4ad2a2b59
-generated: 2019-06-21T22:27:58.380232579+09:30
+digest: sha256:98f086470d20bc24ab86548f45c49cfe7c56c70505ef32816c2f40b2fc49bbd9
+generated: 2019-06-22T22:05:40.020787799+09:30

@@ -52,6 +52,12 @@ nginx-ingress:
       kops.k8s.io/instancegroup: nodes
     publishService:
       enabled: true
+    stats:
+      enabled: true
+    metrics:
+      serviceMonitor:
+        enabled: true
+      enabled: true
 
 #############
 # ExternalDNS
@@ -175,6 +181,8 @@ prometheus-operator:
                 storage: 10Gi
   prometheus:
     prometheusSpec:
+      serviceMonitorSelector:
+        app: moodle-ingress
       storage:
         volumeClaimTemplate:
           spec:
