@@ -5,28 +5,12 @@ configured by [kops](https://github.com/kubernetes/kops).
 
 ## Setup Helm
 
-RBAC permissions for Tiller will need to be set. For the sake of expediency, the example provided: `tiller-rbac.yaml`
-will create a service account which will bind to the super-user - `cluster-admin`.
-
-```
-kubectl create -f tiller-rbac.yaml
-```
-
-Start Tiller and add the service account to it:
-
-```
-helm init --service-account tiller
-```
-
-Install this Helm chart by using command, `helm install`.
-
 Retrieve dependent Helm charts declared in the `requirements.yaml` file:
 ```
 helm dependency update
 ```
 
-After following the steps below, install this Helm chart by using command, `helm install --timeout 600 --wait`.
-Spinnaker takes awhile to install, so use the `--timeout` and `--wait` flags.
+After configuration, install the Helm chart by executing the init script, `./init`.
 
 ## [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx)
 Creates and configures a load balancer. The Ingress Controller is deployed as a
@@ -66,7 +50,10 @@ cert-manager will ensure certificates are valid and up to date, and will renew c
 Set the value of the `cert-manager.clusterIssuer.email` key to be your email address. Let's Encrypt will use this to
 contact you about expiring certificates, and other issues related to your account.
 
-An IAM role will need to be created. This role would contain the necessary policies to allow cert-manager to validate
+Match via DNS zone to identify the provider in order to do DNS01 challenges. Specify the DNS zone in
+`cert-manager-clusterIssuer.dnsZones`.
+
+An IAM role will need to be created. This role would contain the necessary policies to allow cert-mananger to validate
 [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) requests against Route 53. The role
 will be annotated to the cert-manager pod, and the pod will assume that role.
 
@@ -74,6 +61,8 @@ To create the role, use the provided Terraform file: `cert-manager-role.tf`; set
 ([AWS Account ID](https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html#FindingYourAWSId)) in the
 resource argument `aws_iam_role.CertManager.assume_role_policy`, and replace the `NODE_ROLE_NAME` placeholder with the
 name of the role attached to your node(s). When done, use `terraform apply`.
+
+Once created, add that role's ARN to the `cert-manager/values.yaml` file.
 
 ## [Spinnaker](https://www.spinnaker.io/)
 A continuous delivery platform. Create deployment pipelines that run integration and system tests, spin up and down
@@ -138,6 +127,17 @@ Prometheus is used to collect metrics from the Kubernetes cluster, and more spec
 will use that data to display those metrics in dashboards. Users will be able to view the state of the cluster, allowing
 one to be proactive in identifying and addressing issues.
 
+### Prometheus Setup
+
+Firstly, set the subdomain value for your Prometheus instance. Set the value for the keys
+`prometheus-operator.prometheus.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` and
+`prometheus-operator.prometheus.ingress.hosts`.
+
+For HTTPS, set that subdomain value for the keys: `prometheus-operator.prometheus.ingress.tls.secretName` and
+`prometheus-operator.prometheus.ingress.tls.hosts`.
+
+### Grafana Setup
+
 Firstly, set the subdomain value for your Grafana instance. Set the value for the keys
 `prometheus-operator.grafana.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` and
 `prometheus-operator.grafana.ingress.hosts`.
@@ -147,3 +147,25 @@ For HTTPS, set that subdomain value for the keys: `prometheus-operator.grafana.i
 
 Lastly, set a password for the admin user by setting a value for the key, `grafana.adminPassword`. Once Grafana is
 running, you can login using the username, `admin`.
+
+#### kube-proxy Metrics
+The default bind address for `kube-proxy` to collect metrics is `127.0.0.1:10249` - Prometheus instances cannot access.
+Add/change `metricsBindAddress` to `0.0.0.0:10249`. If using kops, edit the cluster - `kops edit cluster`, then add the
+entry as below:
+
+```
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2020-04-21T10:38:47Z"
+  name: domain.com
+spec:
+  kubeProxy:
+    metricsBindAddress: 0.0.0.0
+  api:
+    dns: {}
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+```

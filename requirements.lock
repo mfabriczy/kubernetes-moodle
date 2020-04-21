@@ -1,21 +1,18 @@
 dependencies:
 - name: nginx-ingress
   repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 1.2.3
+  version: 1.33.5
 - name: external-dns
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 0.7.5
+  repository: https://charts.bitnami.com/bitnami/
+  version: 2.20.5
 - name: kube2iam
   repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 0.9.0
-- name: cert-manager
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: v0.5.2
+  version: 2.1.0
 - name: spinnaker
   repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 1.8.0
+  version: 2.0.0-rc1
 - name: prometheus-operator
   repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 5.12.3
-digest: sha256:98f086470d20bc24ab86548f45c49cfe7c56c70505ef32816c2f40b2fc49bbd9
-generated: 2019-06-22T22:05:40.020787799+09:30
+  version: 8.12.13
+digest: sha256:3922aaa602e30800d1fe3cbb4a65fbd14dc512c837ba43c3f17e6711683a16de
+generated: "2020-04-18T21:58:19.90758113+09:30"

@@ -88,15 +88,12 @@ kube2iam:
 # cert-manager
 ##############
 cert-manager:
-  podAnnotations:
-    iam.amazonaws.com/role:
-  ingress:
-    acmeChallengeType: dns01
-    acmeDns01Provider: route53
   clusterIssuer:
     name: letsencrypt-prod
     email:
     server: https://acme-v02.api.letsencrypt.org/directory
+    dnsZones:
+      - mydomain.com
     region:
 
 ##############
@@ -138,9 +135,7 @@ spinnaker:
       # External DNS to create an A record in Route 53.
       external-dns.alpha.kubernetes.io/hostname: "spinnaker.com"
       # cert-manager to issue and manage a TLS certificate for this service.
-      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
-      certmanager.k8s.io/acme-challenge-type: dns01
-      certmanager.k8s.io/acme-dns01-provider: route53
+      cert-manager.io/cluster-issuer: letsencrypt-prod
 
   # By default, Spinnaker is configured without any authentication and authorisation - anyone is able access Spinnaker.
   # An ingress is used to expose Spinnaker's API (Spinnaker API Gateway). In this case, used for OAuth 2.0 - GitHub as the provider.
@@ -156,9 +151,7 @@ spinnaker:
       # API endpoint for Spinnaker's REST API service. Provide the full base URL
       # e.g., https://api.spinnaker.com - do not include the HTTP protocol in the value.
       external-dns.alpha.kubernetes.io/hostname: "api.spinnaker.com"
-      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
-      certmanager.k8s.io/acme-challenge-type: dns01
-      certmanager.k8s.io/acme-dns01-provider: route53
+      cert-manager.io/cluster-issuer: letsencrypt-prod
 
   halyard:
     additionalScripts:
@@ -170,20 +163,24 @@ spinnaker:
 # Prometheus Operator, Grafana
 ##############################
 prometheus-operator:
-  alertmanager:
-    alertmanagerSpec:
-      storage:
-        volumeClaimTemplate:
-          spec:
-            accessModes: ["ReadWriteOnce"]
-            resources:
-              requests:
-                storage: 10Gi
   prometheus:
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        # External DNS to create an A record in Route 53.
+        external-dns.alpha.kubernetes.io/hostname: "prometheus.com"
+        # cert-manager to issue and manage a TLS certificate for this service.
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - prometheus.com
+      tls:
+        - secretName: prometheus.com
+          hosts:
+          - prometheus.com
     prometheusSpec:
-      serviceMonitorSelector:
-        app: moodle-ingress
-      storage:
+      serviceMonitorSelector: {}
+      storageSpec:
         volumeClaimTemplate:
           spec:
             accessModes: ["ReadWriteOnce"]
@@ -199,16 +196,23 @@ prometheus-operator:
         # External DNS to create an A record in Route 53.
         external-dns.alpha.kubernetes.io/hostname: "grafana.com"
         # cert-manager to issue and manage a TLS certificate for this service.
-        certmanager.k8s.io/cluster-issuer: letsencrypt-prod
-        certmanager.k8s.io/acme-challenge-type: dns01
-        certmanager.k8s.io/acme-dns01-provider: route53
+        cert-manager.io/cluster-issuer: letsencrypt-prod
       hosts:
         - grafana.com
       tls:
         - secretName: grafana.com
           hosts:
           - grafana.com
-    persistence:
-      enabled: true
-      accessModes: ["ReadWriteOnce"]
-      size: 10Gi
+
+  # Scrape metrics over HTTP: https://github.com/coreos/prometheus-operator/issues/926#issuecomment-476437013
+  kubelet:
+    serviceMonitor:
+      https: false
+
+  # Enabling as it is kops default
+  kubeDns:
+    enabled: true
+
+  # Disabling as it is kops default
+  coreDns:
+    enabled: false

@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+readonly CERT_MANAGER_PATH="cert-manager"
+
+install_cert_manager() {
+  echo "Installing cert-manager..."
+  CERT_MANAGER_VERSION="0.14.0"
+  CERT_MANAGER_REPO_URL="https://charts.jetstack.io"
+
+  kubectl apply --validate=false -f ${CERT_MANAGER_PATH}/crds.yaml
+
+  helm repo add jetstack "${CERT_MANAGER_REPO_URL}"
+
+  kubectl apply -f ${CERT_MANAGER_PATH}/namespace.yaml
+
+  helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version "${CERT_MANAGER_VERSION}" \
+  -f cert-manager/values.yaml
+
+  local CURRENT_TIME=0
+  local MAX_LIMIT=300 # 5 minutes
+  local STATUS_CODE=1
+  local SLEEP_TIME=10
+  while [ $CURRENT_TIME -le $MAX_LIMIT ]
+  do
+    STATUS=$(kubectl get pod --selector='app.kubernetes.io/component=webhook,app.kubernetes.io/instance=cert-manager' \
+    -n cert-manager \
+    -o jsonpath='{.items[?(@.status.phase=="Running")].status.phase}')
+
+
+    if [ "$STATUS" = "Running" ]; then
+      break
+    else
+     echo "Waiting for cert-manager to be ready..."
+     sleep $SLEEP_TIME
+     ((CURRENT_TIME+=SLEEP_TIME))
+    fi
+  done
+}
+
+is_cert_manager_installed() {
+  kubectl apply -f ${CERT_MANAGER_PATH}/namespace.yaml --server-dry-run | grep -q 'unchanged'
+
+  STATUS_CODE=$?
+
+  if [ $STATUS_CODE -eq 1 ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+main() {
+  local HELM_NAME="kubernetes-moodle"
+  local HELM_TIMEOUT="10m"
+
+  if ! is_cert_manager_installed; then
+    install_cert_manager
+  fi
+  echo "Installing the kubernetes-moodle stack..."
+  helm install ${HELM_NAME} --timeout ${HELM_TIMEOUT} .
+}
+
+# Set the current working directory as the script's location
+cd "${0%/*}"
+
+if [ -e requirements.yaml ]; then
+  main
+  exit 0
+else
+    echo "Cannot be executed in the current path, run it at the root level of the repository"
+    exit 1
+fi
