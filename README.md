@@ -12,17 +12,47 @@ helm dependency update
 
 After configuration, install the Helm chart by executing the init script, `./init`.
 
+## Configuration
+
+The following table lists configuration you will need to change. View the `values.yaml` file for all configuration
+pertinent to this chart.
+
+Parameter | Description | Default
+--- | --- | ---
+`moodleIngress.host` | Domain of your Moodle site | `""`
+`external-dns.domainFilters` | Target zone(s) by domain suffix, e.g., `domain.com` | `[]`
+`external-dns.podAnnotations.iam.amazonaws.com/role` | The External DNS role's ARN. See section [kube2iam](#kube2iam) for more details. | `""`
+`cert-manager.clusterIssuer.email` | Your email address. Let's Encrypt will use this to contact you about expiring certificates, and other issues related to your account. | `""`
+`cert-manager-clusterIssuer.dnsZones` | The DNS zone to match to identify the provider in order to do DNS01 challenges. | `[]`
+`spinnaker.oauth.redirectURI` | The externally accessible URL for the Spinnaker REST API service (gate). Ensure `/login` is added as a suffix to the URL. | `""`
+`spinnaker.oauth.apiBaseURL` | The URL of the proxy/load balancer that is fronting requests for API server. | `spinnaker.api.com`
+`spinnaker.oauth.uiBaseURL` | The *full* URL of proxy/load balancer that's fronting UI requests for Spinnaker. | `""`
+`spinnaker.ingress.host` | The URL that makes Spinnaker reachable from a user's browser. | `spinnaker.com`
+`spinnaker.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `spinnaker.com`
+`spinnaker.ingress.tls.hosts` | The URL that makes Spinnaker reachable from a user's browser via HTTPS. | `spinnaker.com`
+`spinnaker.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` | The hostname that External DNS will look for in order to create DNS records for the Spinnaker instance. | `spinnaker.com`
+`spinnaker.ingressGate.host` | URL for the Spinnaker REST API service (gate). | `api.spinnaker.com`
+`spinnaker.ingressGate.tls.secretName` | The secret name which contains the TLS private key and certificate. | `api.spinnaker.com`
+`spinnaker.ingressGate.tls.hosts` | If using TLS, the external URL of the Spinnaker REST API service. | `api.spinnaker.com`
+`prometheus-operator.prometheus.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` | The hostname that External DNS will look for in order to create DNS records for the Prometheus instance. | `prometheus.com`
+`prometheus-operator.prometheus.ingress.hosts` | The URL that makes Prometheus reachable from a user's browser. | `prometheus.com`
+`prometheus-operator.prometheus.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `prometheus.com`
+`prometheus-operator.prometheus.ingress.tls.hosts` | The URL that makes Prometheus reachable from a user's browser via HTTPS. | `prometheus.com`
+`prometheus-operator.grafana.adminPassword` | The password for the Grafana admin account. | `""`
+`prometheus-operator.grafana.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` | The hostname that External DNS will look for in order to create DNS records for the Grafana instance. | `grafana.com`
+`prometheus-operator.grafana.ingress.hosts` | The URL that makes Grafana reachable from a user's browser. | `grafana.com`
+`prometheus-operator.grafana.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `grafana.com`
+`prometheus-operator.grafana.ingress.tls.hosts` | The URL that makes Grafana reachable from a user's browser via HTTPS. | `grafana.com`
+
+This repository contains the following Helm charts:
+
 ## [NGINX Ingress Controller](https://github.com/kubernetes/ingress-nginx)
 Creates and configures a load balancer. The Ingress Controller is deployed as a
 DaemonSet. Configured with an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) to route
 traffic to services within a cluster.
 
-Set the value of the `moodleIngress.host` key to be the subdomain of your Moodle site, e.g., moodle.yourdomain.com.
-
-## [ExternalDNS](https://github.com/kubernetes-incubator/external-dns)
+## [External DNS](https://github.com/kubernetes-incubator/external-dns)
 Control DNS records dynamically by configuring your DNS provider - in this case, Route53.
-
-In the `values.yaml` file, set the value of the `external-dns.domainFilters` key to be the domain e.g., "yourdomain.com".
 
 ## [kube2iam](https://github.com/jtblin/kube2iam)
 Allows a pod to assume an IAM role. Deployed as a
@@ -46,12 +76,6 @@ cert-manager is used to automate the management and issuance of TLS certificates
 [Let's Encrypt](https://letsencrypt.org/).
 
 cert-manager will ensure certificates are valid and up to date, and will renew certificates before expiry.
-
-Set the value of the `cert-manager.clusterIssuer.email` key to be your email address. Let's Encrypt will use this to
-contact you about expiring certificates, and other issues related to your account.
-
-Match via DNS zone to identify the provider in order to do DNS01 challenges. Specify the DNS zone in
-`cert-manager-clusterIssuer.dnsZones`.
 
 An IAM role will need to be created. This role would contain the necessary policies to allow cert-mananger to validate
 [DNS-01 challenge](https://letsencrypt.org/docs/challenge-types/#dns-01-challenge) requests against Route 53. The role
@@ -80,19 +104,13 @@ Create an OAuth app on GitHub
 ([link](https://developer.github.com/apps/building-oauth-apps/creating-an-oauth-app/)).
 
 In the Homepage URL field, set the subdomain value that users will access Spinnaker from
-([Deck](https://github.com/spinnaker/deck)), e.g., `https://spinnaker.yourdomain.com`. Set the
-`spinnaker.oauth.uiBaseURL`, `spinnaker.ingress.host` (without HTTPS), `spinnaker.ingress.tls.secretName` (without HTTPS),
-`spinnaker.ingress.tls.hosts` (without HTTPS) and `spinnaker.ingress.annotations.external-dns.alpha.kubernetes.io/hostname`
-(without HTTPS) keys to the same subdomain value.
+([Deck](https://github.com/spinnaker/deck)), e.g., `https://spinnaker.yourdomain.com`.
 
 Set a value in the
 [Authorization callback URL](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/#redirect-urls)
 field: GitHub will redirect a user to that address ([Spinnaker API Gateway](https://github.com/spinnaker/gate))
 after authentication has been completed. For example, `https://api.spinnaker.yourdomain.com/login` - note that `/login`
-at the end of the value is needed; afterwards, set the API subdomain value you had just inserted in GitHub to the
-following keys: `spinnaker.ingressGate.host` (without HTTPS), `spinnaker.ingressGate.tls.secretName` (without HTTPS),
-`spinnaker.ingressGate.tls.hosts` (without HTTPS) and
-`spinnaker.ingressGate.annotations.external-dns.alpha.kubernetes.io/hostname` (without HTTPS).
+at the end of the value is needed; afterwards.
 
 When logging into Spinnaker for the first time, as part of the OAuth authorisation process, you will be prompted to enter
 your GitHub credentials to proceed.
@@ -127,26 +145,8 @@ Prometheus is used to collect metrics from the Kubernetes cluster, and more spec
 will use that data to display those metrics in dashboards. Users will be able to view the state of the cluster, allowing
 one to be proactive in identifying and addressing issues.
 
-### Prometheus Setup
-
-Firstly, set the subdomain value for your Prometheus instance. Set the value for the keys
-`prometheus-operator.prometheus.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` and
-`prometheus-operator.prometheus.ingress.hosts`.
-
-For HTTPS, set that subdomain value for the keys: `prometheus-operator.prometheus.ingress.tls.secretName` and
-`prometheus-operator.prometheus.ingress.tls.hosts`.
-
-### Grafana Setup
-
-Firstly, set the subdomain value for your Grafana instance. Set the value for the keys
-`prometheus-operator.grafana.ingress.annotations.external-dns.alpha.kubernetes.io/hostname` and
-`prometheus-operator.grafana.ingress.hosts`.
-
-For HTTPS, set that subdomain value for the keys: `prometheus-operator.grafana.ingress.tls.secretName` and
-`prometheus-operator.grafana.ingress.tls.hosts`.
-
-Lastly, set a password for the admin user by setting a value for the key, `grafana.adminPassword`. Once Grafana is
-running, you can login using the username, `admin`.
+Set a password for the admin user by setting a value for the key, `grafana.adminPassword`. Once Grafana is running, you
+can login using the username, `admin`.
 
 #### kube-proxy Metrics
 The default bind address for `kube-proxy` to collect metrics is `127.0.0.1:10249` - Prometheus instances cannot access.
