@@ -216,3 +216,21 @@ prometheus-operator:
   # Disabling as it is kops default
   coreDns:
     enabled: false
+
+keycloak:
+  keycloak:
+    password:
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        # External DNS to create an A record in Route 53.
+        external-dns.alpha.kubernetes.io/hostname: "keycloak.com"
+        # cert-manager to issue and manage a TLS certificate for this service.
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - keycloak.com
+      tls:
+        - secretName: keycloak.com
+          hosts:
+          - keycloak.com

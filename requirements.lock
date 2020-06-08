@@ -14,5 +14,8 @@ dependencies:
 - name: prometheus-operator
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 8.12.13
-digest: sha256:3922aaa602e30800d1fe3cbb4a65fbd14dc512c837ba43c3f17e6711683a16de
-generated: "2020-04-18T21:58:19.90758113+09:30"
+- name: keycloak
+  repository: https://codecentric.github.io/helm-charts
+  version: 8.0.0
+digest: sha256:aeb64c2b3c460842ecdbe8ae2ab5292b089b3fb9a2fa092b297fd84a51032a4a
+generated: "2020-06-08T15:58:22.713072339+09:30"

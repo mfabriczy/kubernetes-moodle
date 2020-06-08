@@ -24,6 +24,11 @@ Parameter | Description | Default
 `external-dns.podAnnotations.iam.amazonaws.com/role` | The External DNS role's ARN. See section [kube2iam](#kube2iam) for more details. | `""`
 `cert-manager.clusterIssuer.email` | Your email address. Let's Encrypt will use this to contact you about expiring certificates, and other issues related to your account. | `""`
 `cert-manager-clusterIssuer.dnsZones` | The DNS zone to match to identify the provider in order to do DNS01 challenges. | `[]`
+`keycloak.keycloak.password` | The password for the Keycloak admin account. | `""`
+`keycloak.keycloak.ingress.external-dns.alpha.kubernetes.io/hostname` | The hostname that External DNS will look for in order to create DNS records for the Keycloak instance. | `keycloak.com`
+`keycloak.keycloak.ingress.hosts` | The URL that makes Keycloak reachable from a user's browser. | `keycloak.com`
+`keycloak.keycloak.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `keycloak.com`
+`keycloak.keycloak.ingress.tls.hosts` | The URL that makes Keycloak reachable from a user's browser via HTTPS. | `keycloak.com`
 `spinnaker.oauth.redirectURI` | The externally accessible URL for the Spinnaker REST API service (gate). Ensure `/login` is added as a suffix to the URL. | `""`
 `spinnaker.oauth.apiBaseURL` | The URL of the proxy/load balancer that is fronting requests for API server. | `spinnaker.api.com`
 `spinnaker.oauth.uiBaseURL` | The *full* URL of proxy/load balancer that's fronting UI requests for Spinnaker. | `""`
@@ -87,6 +92,16 @@ resource argument `aws_iam_role.CertManager.assume_role_policy`, and replace the
 name of the role attached to your node(s). When done, use `terraform apply`.
 
 Once created, add that role's ARN to the `cert-manager/values.yaml` file.
+
+## [Keycloak](https://www.keycloak.org/)
+Keycloak is an open source identity and access management service. Users and groups are not created and maintained in
+the applications themselves and are instead carried out in Keycloak. Single sign-on is performed by Keycloak
+(via the OAuth 2 standard) to services in this chart.
+
+Keycloak can be used for user and group management in conjunction with Kubernetes RBAC to authorise and restrict
+access to Kubernetes resources.
+
+Look into an application's documentation on how to implement the OAuth workflow with Keycloak.
 
 ## [Spinnaker](https://www.spinnaker.io/)
 A continuous delivery platform. Create deployment pipelines that run integration and system tests, spin up and down

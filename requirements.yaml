@@ -14,3 +14,6 @@ dependencies:
 - name: prometheus-operator
   version: 8.12.13
   repository: https://kubernetes-charts.storage.googleapis.com/
+- name: keycloak
+  version: 8.0.0
+  repository: https://codecentric.github.io/helm-charts
