@@ -155,6 +155,14 @@ can be used as a reference point to build a pipeline to satisfy requirements. Af
 bucket's name into the
 [Expected Artifacts](https://www.spinnaker.io/reference/artifacts/in-pipelines/#expected-artifacts) section.
 
+### Spinnaker Integration with Keycloak
+Creation and management of users can be done by Keycloak. For more information, refer to the following
+[documentation](https://www.spinnaker.io/setup/security/authentication/oauth) and the configuration table in this
+README for setup.
+
+Once the Spinnaker and Keycloak is running, modify the provided script with values relevant to your installation, then
+run the script, `./halyard-oauth-init.sh`.
+
 ## [Prometheus](https://prometheus.io/) and [Grafana](https://grafana.com/)
 Prometheus is used to collect metrics from the Kubernetes cluster, and more specifically, pods running Moodle. Grafana
 will use that data to display those metrics in dashboards. Users will be able to view the state of the cluster, allowing
