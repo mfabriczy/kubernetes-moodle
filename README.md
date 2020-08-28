@@ -29,6 +29,12 @@ Parameter | Description | Default
 `keycloak.keycloak.ingress.hosts` | The URL that makes Keycloak reachable from a user's browser. | `keycloak.com`
 `keycloak.keycloak.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `keycloak.com`
 `keycloak.keycloak.ingress.tls.hosts` | The URL that makes Keycloak reachable from a user's browser via HTTPS. | `keycloak.com`
+`jenkins.master.adminPassword` | The password for the Jenkins admin account. | `""`
+`jenkins.master.installPlugins` | List of Jenkins plugins to install. If you don't want to install plugins set it to []. | `keycloak:2.3.0`
+`jenkins.master.ingress.external-dns.alpha.kubernetes.io/hostname` | The hostname that External DNS will look for in order to create DNS records for the Jenkins instance. | `jenkins.com`
+`jenkins.master.ingress.hostName` | The hostname that External DNS will look for in order to create DNS records for the Spinnaker instance. | `jenkins.com`
+`jenkins.master.ingress.tls.secretName` | The secret name which contains the TLS private key and certificate. | `jenkins.com`
+`jenkins.master.ingress.tls.hosts` | The URL that makes Jenkins reachable from a user's browser via HTTPS. | `jenkins.com`
 `spinnaker.oauth.redirectURI` | The externally accessible URL for the Spinnaker REST API service (gate). Ensure `/login` is added as a suffix to the URL. | `""`
 `spinnaker.oauth.apiBaseURL` | The URL of the proxy/load balancer that is fronting requests for API server. | `spinnaker.api.com`
 `spinnaker.oauth.uiBaseURL` | The *full* URL of proxy/load balancer that's fronting UI requests for Spinnaker. | `""`
@@ -102,6 +108,14 @@ Keycloak can be used for user and group management in conjunction with Kubernete
 access to Kubernetes resources.
 
 Look into an application's documentation on how to implement the OAuth workflow with Keycloak.
+
+## [Jenkins](https://www.jenkins.io/)
+An automation platform, in this context, to used for continuous integration. It is normally used for building and
+testing software, but can be used for software deployments.
+
+Creation and management of users can be done by Keycloak. The Jenkins Keycloak plugin is installed with Jenkins. For
+more information, refer to the following
+[documentation](https://medium.com/faun/integrating-keycloak-sso-with-jenkins-957dd438f831).
 
 ## [Spinnaker](https://www.spinnaker.io/)
 A continuous delivery platform. Create deployment pipelines that run integration and system tests, spin up and down

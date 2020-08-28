@@ -17,5 +17,8 @@ dependencies:
 - name: keycloak
   repository: https://codecentric.github.io/helm-charts
   version: 8.0.0
-digest: sha256:aeb64c2b3c460842ecdbe8ae2ab5292b089b3fb9a2fa092b297fd84a51032a4a
-generated: "2020-06-08T15:58:22.713072339+09:30"
+- name: jenkins
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 2.5.2
+digest: sha256:b96beef42c3c5f656f38b8491a48d8662dc04e98ac5b951c5f563bca3a4a42e1
+generated: "2020-08-28T20:24:17.434749067+09:30"
