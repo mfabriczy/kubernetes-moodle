@@ -158,7 +158,7 @@ spinnaker:
 ##############################
 # Prometheus Operator, Grafana
 ##############################
-prometheus-operator:
+kube-prometheus-stack:
   prometheus:
     ingress:
       enabled: true

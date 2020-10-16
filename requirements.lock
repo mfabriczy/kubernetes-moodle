@@ -11,14 +11,14 @@ dependencies:
 - name: spinnaker
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 2.0.0-rc1
-- name: prometheus-operator
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 8.12.13
+- name: kube-prometheus-stack
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 10.0.1
 - name: keycloak
   repository: https://codecentric.github.io/helm-charts
   version: 8.0.0
 - name: jenkins
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 2.5.2
-digest: sha256:91efb866255415918e3855c76239ac97598336502a29b1cde7f7ade5a9ef3d6a
-generated: "2020-10-17T11:59:47.279624835+10:30"
+digest: sha256:85ca27e4d7975fa49d92973dd406d28656380f3585e3d3a242a3ce8cfa2b401e
+generated: "2020-10-17T12:02:29.948940893+10:30"
