@@ -43,21 +43,17 @@ moodleIngress:
 ##########################
 # NGINX Ingress Controller
 ##########################
-nginx-ingress:
+ingress-nginx:
   controller:
     kind: DaemonSet
     nodeSelector:
       # The default value below is a label automatically attached to nodes by kops. Change to whatever you want to insert
       # the ingress controller into specific nodes.
       kops.k8s.io/instancegroup: nodes
-    publishService:
+    metrics:
       enabled: true
-   stats:
-     enabled: true
-   metrics:
-     serviceMonitor:
-       enabled: true
-     enabled: true
+      serviceMonitor:
+        enabled: true
 
 #############
 # ExternalDNS

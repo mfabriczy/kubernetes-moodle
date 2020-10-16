@@ -1,7 +1,7 @@
 dependencies:
-- name: nginx-ingress
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 1.33.5
+- name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 3.7.1
 - name: external-dns
   repository: https://charts.bitnami.com/bitnami/
   version: 2.20.5
@@ -20,5 +20,5 @@ dependencies:
 - name: jenkins
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 2.5.2
-digest: sha256:b96beef42c3c5f656f38b8491a48d8662dc04e98ac5b951c5f563bca3a4a42e1
-generated: "2020-08-28T20:24:17.434749067+09:30"
+digest: sha256:91efb866255415918e3855c76239ac97598336502a29b1cde7f7ade5a9ef3d6a
+generated: "2020-10-17T11:59:47.279624835+10:30"
